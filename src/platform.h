@@ -10,8 +10,12 @@ uint32_t getRandomNumber(int seed = 1);  //awful and very weak random number!
 #define getCycleCount() ESP.getCycleCount()
 #define PLATFORM_PRINTF(x,...) Serial.printf((x), ##__VA_ARGS__)
 
-#else       //Define your own!
-
-#define getCycleCount() ESP.getCycleCount()
-#define PLATFORM_PRINTF(x,...) Serial.printf((x), ##__VA_ARGS__)
+#elif defined(CUBEIDE)
+void cycleCounterInit();
+#define getCycleCount() DWT->CYCCNT
+#define PLATFORM_PRINTF(x,...) printf((x), ##__VA_ARGS__)
+#else      //Define your own!
+#error "CriptoLib: Define your platform specific functions"
+#define getCycleCount() DWT->CYCCNT
+#define PLATFORM_PRINTF(x,...) printf((x), ##__VA_ARGS__)
 #endif

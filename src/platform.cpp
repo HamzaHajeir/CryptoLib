@@ -20,3 +20,12 @@ uint32_t __attribute__((weak)) getRandomNumber(int seed)
     return rand;
 #endif
 }
+
+#ifdef CUBEIDE
+void cycleCounterInit()
+{        
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+    DWT->CYCCNT = 0;
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+}
+#endif
