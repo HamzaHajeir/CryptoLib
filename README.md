@@ -14,6 +14,15 @@ These modes (CBC and CMAC) are developed for securing a custom protocol.
 The aim for sharing this library beside saving time, is to help C++ programmers from stopping C-style code from (bleeding into) their codes.
 
 -------
+## How to use it?
+1. You should install [mbedtls](https://github.com/ARMmbed/mbedtls/releases/tag/v2.23.0) library.
+2. Replace the default `\include\mbedtls\config.h` file with provided [config.h](config.h) file. 
+
+It currently support to use ESP8266 and ESP32, If you have different platform, It's not hard to add your customization to `platform.h` and `platform.cpp`, which should include:
+- PRINTF definition support (if used debugging)
+- getCycleCount()  definition to a high clock speed function, used as entropy source.  
+You can define your own entropy source by defining `uint32_t getRandomNumber(int seed)` into your skecth
+-------
 ## How to contribute?
 
 The current *alpha* design for the library is:
