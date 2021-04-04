@@ -1,0 +1,32 @@
+#ifndef MBEDTLS_CONFIG_H
+#define MBEDTLS_CONFIG_H
+
+/* System support */
+#define MBEDTLS_HAVE_TIME
+#define MBEDTLS_HAVE_TIME_DATE
+
+/* Mbed Crypto feature support */
+#define MBEDTLS_CIPHER_MODE_CBC
+// #define MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS
+// #define MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN
+// #define MBEDTLS_CIPHER_PADDING_ZEROS
+#define MBEDTLS_FS_IO
+#define MBEDTLS_ENTROPY_NV_SEED
+#define MBEDTLS_PLATFORM_NV_SEED_ALT
+#define MBEDTLS_NO_PLATFORM_ENTROPY
+
+/* Mbed Crypto modules */
+#define MBEDTLS_AES_C
+#define MBEDTLS_CIPHER_C
+#define MBEDTLS_CMAC_C
+#define MBEDTLS_CTR_DRBG_C
+#define MBEDTLS_ENTROPY_C
+// #define MBEDTLS_GCM_C
+#define MBEDTLS_PLATFORM_C
+#define MBEDTLS_SHA256_C
+#define MBEDTLS_VERSION_C
+#define MBEDTLS_XTEA_C
+
+#include "check_config.h"
+
+#endif /* MBEDTLS_CONFIG_H */
