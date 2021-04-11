@@ -17,7 +17,7 @@ uint32_t getRandomNumber(int seed = 1);  //awful and very weak random number!
     Define your platform's clockCycle here
 */
 
-#elif defined(CUBEIDE)
+#elif defined(USE_HAL_DRIVER)
 void cycleCounterInit();
 #define getCycleCount() DWT->CYCCNT
 #define PLATFORM_PRINTF(x,...) printf((x), ##__VA_ARGS__)
