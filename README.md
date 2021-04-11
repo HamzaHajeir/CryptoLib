@@ -18,10 +18,12 @@ The aim for sharing this library beside saving time, is to help C++ programmers 
 1. You should install [mbedtls](https://github.com/ARMmbed/mbedtls/releases/tag/v2.23.0) library.
 2. Replace the default `\include\mbedtls\config.h` file with provided [config.h](config.h) file. 
 
-It currently supported on ESP8266, ESP32, And STM32. If you have different platform, It's not hard to add your customization to `platform.h` and `platform.cpp`, which should include:
+It currently supported on all Arduino platforms. ESP8266, ESP32 with more advance features than other. It's supported on STM32CubeIDE (See below). 
+
+If you have different platform, It's not hard to add your customization to `platform.h` and `platform.cpp`, which should include:
 - PRINTF definition support (if used debugging)
 - getCycleCount()  definition to a high clock speed function, used as entropy source.  
-You can define your own entropy source by defining `uint32_t getRandomNumber(int seed)` into your skecth
+You can define your own entropy source by defining `uint32_t getRandomNumber(int seed)` into your skecth.
 
 ## STM32CubeIDE users:
 For the library to work properly, It's important to activate the Cycle Counter `DWT` by calling `cycleCounterInit()` at the beginning of your skecth.
