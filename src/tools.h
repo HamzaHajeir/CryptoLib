@@ -1,5 +1,5 @@
 #pragma once 
-#include "common.h"
+#include "CryptoLibCommon.h"
 
 void printU8(const char* description, const uint8_t data[], const int size);
 void printU8(const char *description, const AU_8_16 &data);

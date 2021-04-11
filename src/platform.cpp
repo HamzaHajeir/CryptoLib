@@ -8,7 +8,11 @@ uint32_t __attribute__((weak)) getRandomNumber(int seed)
 {
 #ifdef ARDUINO
 
+#ifdef ARDUINO_ARCH_ESP8266 || defined(ARDUINO_ARCH_ESP32)
     randomSeed(getCycleCount());
+#else
+    randomSeed(micros());
+#endif
     return random(MAX_VALUE_32_BITS);
 
 #else

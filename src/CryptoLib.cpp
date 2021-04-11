@@ -1,4 +1,4 @@
-#include "Crypto.h"
+#include "CryptoLib.h"
 #include "mbedtls/entropy_poll.h"
 #include <algorithm>
 #include <string>
@@ -35,8 +35,7 @@ int CryptoLib::encrypt_cbc(VU_8 &plainText, AU_8_16 &iv, const AU_8_16 &passedKe
         padMessageLength--;
     }
 
-    unsigned char *input = &plainText[0];
-    unsigned char output[plainText.size()];
+    VU_8 output(plainText.size());
 
     // input=reinterpret_cast<unsigned char*> (plainText.front());
     input_len = plainText.size();
@@ -47,17 +46,30 @@ int CryptoLib::encrypt_cbc(VU_8 &plainText, AU_8_16 &iv, const AU_8_16 &passedKe
         PRINTF("mbedtls Encrypt set key failed %d\n", ret);
     }
 
-    ret = mbedtls_aes_crypt_cbc(&aes, MBEDTLS_AES_ENCRYPT, plainText.size(), &iv_copy[0], input, output);
+    ret = mbedtls_aes_crypt_cbc(&aes, MBEDTLS_AES_ENCRYPT, plainText.size(), iv_copy.data(), plainText.data(), output.data());
     if (ret != 0)
     {
         PRINTF("mbedtls_aes_crypt_cbc failed %d\n", ret);
     }
-    printU8("Output:", output, plainText.size());
+    printU8("Output:", output);
     //1
     plainText.clear();
-    std::copy(output, output + input_len, back_inserter(plainText));
-    //2
-    //plainText=VU_8(output[0],input_len);
+
+    /* use move instead of copy */
+    /* 
+        1. by std::move. 
+    */
+    // std::move(output.begin(),output.end(),back_inserter(plainText));
+    /* 
+        2. by insert and make_move_iterator, 
+        that has a performence advantage of preallocating spece in the target vector. 
+    */
+    plainText.insert(plainText.begin(), std::make_move_iterator(output.begin())
+                                        , std::make_move_iterator(output.end()));
+
+    /* Both move operations require this erase, because output is at intermediate state just before erasing */
+    output.erase(output.begin(),output.end());
+    
     return ret;
 }
 
@@ -98,7 +110,7 @@ int CryptoLib::generateIV(AU_8_16 &iv)
     getRandomIV(newIV);
 
     printU8("GeneratedIV:", newIV);
-    std::copy(newIV.begin(), newIV.end(), iv.begin());
+    std::move(newIV.begin(), newIV.end(), iv.begin());
 
 exit:
     return ret;
@@ -168,7 +180,7 @@ int CryptoLib::decrypt_cbc(VU_8 &encryptedText, AU_8_16 &iv, const AU_8_16 &_key
 {
 
     int input_len = encryptedText.size();
-    uint8_t messageDecrypt[input_len];
+    VU_8 messageDecrypt(input_len);
 
     PRINTF("message length=%d\n", input_len);
 
@@ -183,16 +195,19 @@ int CryptoLib::decrypt_cbc(VU_8 &encryptedText, AU_8_16 &iv, const AU_8_16 &_key
         PRINTF("mbedtls decryption set key failed %d\n", ret);
         goto exit;
     }
-    ret = mbedtls_aes_crypt_cbc(&ctx, MBEDTLS_AES_DECRYPT, input_len, (uint8_t *)&iv[0], (const uint8_t *)&encryptedText[0], &messageDecrypt[0]);
+    ret = mbedtls_aes_crypt_cbc(&ctx, MBEDTLS_AES_DECRYPT, input_len, iv.data(), encryptedText.data(), messageDecrypt.data());
     if (ret != 0)
     {
         PRINTF("mbedtls decryption failed %d\n", ret);
         goto exit;
     }
     mbedtls_aes_free(&ctx);
-    printU8("messageDycrypt:", messageDecrypt, input_len);
+    printU8("messageDycrypt:", messageDecrypt);
     encryptedText.clear();
-    std::copy(messageDecrypt, messageDecrypt + input_len, back_inserter(encryptedText));
+    encryptedText.insert(encryptedText.begin(), std::make_move_iterator(messageDecrypt.begin())
+                                                , std::make_move_iterator(messageDecrypt.end()));
+    messageDecrypt.erase(messageDecrypt.begin(), messageDecrypt.end());
+
 // encryptedText = messageDecrypt;
 exit:
     return ret;

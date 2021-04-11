@@ -11,8 +11,7 @@
 
 int CryptoLib::calculate_cmac(const VU_8 &msg,VU_8 &result, const AU_8_16 &passedKey)
 {
-    unsigned char output[16];
-    unsigned char* input =  /* &msg[0] */ const_cast<uint8_t*>(&msg[0]);
+    VU_8 output(16);
     int input_len = msg.size();
 
     unsigned char key[16] = {0};
@@ -26,12 +25,14 @@ int CryptoLib::calculate_cmac(const VU_8 &msg,VU_8 &result, const AU_8_16 &passe
     if(cipher_info==NULL)
         PRINTF("mbedtls_cipher_info_from_type failed\n");
 
-    ret = mbedtls_cipher_cmac(cipher_info, key, 128, input, input_len, output);
+    ret = mbedtls_cipher_cmac(cipher_info, key, 128, msg.data(), input_len, output.data());
     PRINTF("mbedtls_cipher_cmac returned %d\n",ret);
 
-    printU8("CMAC:", output, 16);
+    printU8("CMAC:", output);
 
-    std::copy(std::begin(output), std::end(output), std::back_inserter(result));
+    result.insert(result.begin(), std::make_move_iterator(output.begin())
+                                    , std::make_move_iterator(output.end()));
+    output.erase(output.begin(),output.end());
     return ret;
 }
 
@@ -46,7 +47,9 @@ int CryptoLib::cmac_message(VU_8 &msg, const AU_8_16& key)
     VU_8 output;
     int ret = calculate_cmac(msg,output,key);
 
-    std::copy(output.begin(), output.begin() + 16, back_inserter(msg));
+    msg.insert(msg.end(), std::make_move_iterator(output.begin())
+                            , std::make_move_iterator(output.end()));
+    output.erase(output.begin(), output.end());
     return ret;
 
 }
@@ -79,7 +82,7 @@ int CryptoLib::validateMIC(VU_8 &ciphertext, const AU_8_16 &_key, bool remove_iv
     }
 
     VU_8 MIC_R;
-    std::copy(copy.end()-16,copy.end(),back_inserter(MIC_R));
+    std::move(copy.end()-16,copy.end(),back_inserter(MIC_R));
     copy.erase(copy.end()-16,copy.end());
 
     VU_8 MIC_C;

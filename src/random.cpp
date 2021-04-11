@@ -2,13 +2,9 @@
 #include <Arduino.h>
 #endif
 #include <algorithm>
-
-#include "common.h"
 #include "random.h"
 #include "tools.h"
 #include "platform.h"
-
-
 
 
 void __attribute__((weak)) getRandomIV(AU_8_16& iv)

@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-#include <Crypto.h>
+#include <CryptoLib.h>
 
 #include <string>
 #include <vector>   //included in Crypto.h

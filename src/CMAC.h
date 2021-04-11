@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "common.h"
+#include "CryptoLibCommon.h"
 #include "mbedtls/cmac.h"
 
 namespace CryptoLib {
