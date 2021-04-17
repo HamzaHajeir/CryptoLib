@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common.h"
+#include "CryptoLibCommon.h"
 #include <mbedtls/config.h>
 #include <mbedtls/aes.h>
 // #include "mbedtls/entropy.h"        //MBEDTLS_ENTROPY_C

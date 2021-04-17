@@ -1,6 +1,7 @@
 
 #include "platform.h"
 
+#ifdef USE_HAL_DRIVERS
 #ifdef STM32F0
 #include "stm32f0xx.h"
 #endif
@@ -18,6 +19,7 @@
 #endif
 #ifdef STM32F7
 #include "stm32f7xx.h"
+#endif
 #endif
 
 
