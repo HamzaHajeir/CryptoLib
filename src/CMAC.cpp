@@ -96,7 +96,7 @@ int CryptoLib::validateMIC(VU_8 &ciphertext, const AU_8_16 &_key, bool remove_iv
     return ret == 0 ? !result /* returns zero at true */ : ret;
 }
 
-bool CryptoLib::isMIC(VU_8 &receivedText, const AU_8_16 &_key)
+bool CryptoLib::isMIC(VU_8 &receivedText, const AU_8_16 &_key, bool remove_iv)
 {
-    return !validateMIC(receivedText, _key);
+    return !validateMIC(receivedText, _key, remove_iv);
 }

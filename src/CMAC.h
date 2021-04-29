@@ -70,6 +70,6 @@ namespace CryptoLib {
     How to use : 
         * Pass the receivedText and the key used for the communcation
 */
-    bool isMIC(VU_8 &receivedText, const AU_8_16 &);
+    bool isMIC(VU_8 &receivedText, const AU_8_16 &, bool remove_iv = true);
 
 }
