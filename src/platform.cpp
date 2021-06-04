@@ -29,7 +29,7 @@ uint32_t __attribute__((weak)) getRandomNumber(int seed)
 const uint32_t MAX_VALUE_32_BITS = pow(2, 32);
 
 #ifdef ARDUINO_ARCH_ESP8266 || defined(ARDUINO_ARCH_ESP32)
-    randomSeed(getCycleCount());
+    randomSeed(Crypto_getClock());
 #else
     randomSeed(micros());
 #endif
@@ -37,7 +37,7 @@ const uint32_t MAX_VALUE_32_BITS = pow(2, 32);
 
 #else
     static uint32_t rand;
-    rand += getCycleCount();
+    rand += Crypto_getClock();
     rand += 351968432;
     rand *= 32938911;
     rand *= seed;

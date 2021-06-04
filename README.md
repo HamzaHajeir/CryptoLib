@@ -22,7 +22,7 @@ It currently supported on all Arduino platforms. ESP8266, ESP32 with more advanc
 
 If you have different platform, It's not hard to add your customization to `platform.h` and `platform.cpp`, which should include:
 - PRINTF definition support (if used debugging)
-- getCycleCount()  definition to a high clock speed function, used as entropy source.  
+- Crypto_getClock()  definition to a high clock speed function, used as entropy source.  
 You can define your own entropy source by defining `uint32_t getRandomNumber(int seed)` into your skecth.
 
 ## STM32CubeIDE users:

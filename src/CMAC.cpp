@@ -71,7 +71,7 @@ int CryptoLib::removeMIC(VU_8 &ciphertext)
 */
 int CryptoLib::validateMIC(VU_8 &ciphertext, const AU_8_16 &_key, bool remove_iv)
 {
-    VU_8 copy;
+    VU_8 copy;  // Work on a copy
     if(remove_iv)
     {
         std::copy(ciphertext.begin()+16,ciphertext.end(),back_inserter(copy));  //removes IV (default)

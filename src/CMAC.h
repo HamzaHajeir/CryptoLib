@@ -42,7 +42,7 @@ namespace CryptoLib {
     int removeMIC(VU_8 &ciphertext);
 
     //validateMIC(vector &ciphertext, const AU_8_16 &, bool remove_iv = true) Pass all ciphertext along with IV and CMAC : returns 0 on success / 1 or return by calls on failure
-    /* 
+/* 
     Validates whether the received ciphertext has integrity at all or not.
     By default it removes the IV from the beginning of the message (pass false if intended to keep it (Or you've removed it before))
 
