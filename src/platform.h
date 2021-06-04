@@ -8,7 +8,7 @@ uint32_t getRandomNumber(int seed = 1);  //awful and very weak random number!
 #ifdef ARDUINO_ARCH_ESP8266 || defined(ARDUINO_ARCH_ESP32)
 #include <ESP.h>
 
-#define Crypto_getClock() ESP.Crypto_getClock()
+#define Crypto_getClock() ESP.getCycleCount()
 #define PLATFORM_PRINTF(x,...) Serial.printf((x), ##__VA_ARGS__)
 #endif  //ARDUINO_ARCH_ESP8266 || defined(ARDUINO_ARCH_ESP32)
 
