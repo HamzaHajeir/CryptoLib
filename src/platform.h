@@ -18,9 +18,14 @@ uint32_t getRandomNumber(int seed = 1);  //awful and very weak random number!
 */
 
 #elif defined(USE_HAL_DRIVER)
+#ifdef __cplusplus
+extern "C"{
+#endif
 void cycleCounterInit();
 #define Crypto_getClock() DWT->CYCCNT
 #define PLATFORM_PRINTF(x,...) printf((x), ##__VA_ARGS__)
+#ifdef __cplusplus
+}
 #else      //Define your own!
 #error "CriptoLib: Define your platform specific functions"
 #define Crypto_getClock() DWT->CYCCNT
