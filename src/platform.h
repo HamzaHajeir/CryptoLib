@@ -26,6 +26,7 @@ void cycleCounterInit();
 #define PLATFORM_PRINTF(x,...) printf((x), ##__VA_ARGS__)
 #ifdef __cplusplus
 }
+#endif
 #else      //Define your own!
 #error "CriptoLib: Define your platform specific functions"
 #define Crypto_getClock() DWT->CYCCNT
