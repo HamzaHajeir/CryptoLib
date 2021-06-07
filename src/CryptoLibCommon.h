@@ -4,7 +4,7 @@
 #include <vector>
 #include "platform.h"
 
-#define CryptoDebug
+// #define CryptoDebug
 
 using VU_8 = std::vector<uint8_t>;
 using AU_8_16 = std::array<uint8_t,16>;
