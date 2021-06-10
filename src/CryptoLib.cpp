@@ -20,15 +20,15 @@ using namespace CryptoLib; //For TEST functions
 int CryptoLib::encrypt_cbc(VU_8 &plainText, AU_8_16 &iv, const AU_8_16 &passedKey)
 {
     AU_8_16 iv_copy = iv;
-    printU8("passed iv= ", iv);
+    CRYPTO_DEBUG(printU8("passed iv= ", iv));
 
-    printU8("PassedKey:", passedKey);
+    CRYPTO_DEBUG(printU8("PassedKey:", passedKey));
 
     int ret;
     size_t input_len = plainText.size();
 
     int padMessageLength = 16 - (input_len % 16);
-    PRINTF("Padding %d bytes\n", padMessageLength);
+    CRYPTOLIB_PRINTF("Padding %d bytes\n", padMessageLength);
     while (padMessageLength)
     {
         plainText.push_back(0x00);
@@ -43,15 +43,15 @@ int CryptoLib::encrypt_cbc(VU_8 &plainText, AU_8_16 &iv, const AU_8_16 &passedKe
     ret = mbedtls_aes_setkey_enc(&aes, &passedKey[0], 128);
     if (ret != 0)
     {
-        PRINTF("mbedtls Encrypt set key failed %d\n", ret);
+        CRYPTOLIB_PRINTF("mbedtls Encrypt set key failed %d\n", ret);
     }
 
     ret = mbedtls_aes_crypt_cbc(&aes, MBEDTLS_AES_ENCRYPT, plainText.size(), iv_copy.data(), plainText.data(), output.data());
     if (ret != 0)
     {
-        PRINTF("mbedtls_aes_crypt_cbc failed %d\n", ret);
+        CRYPTOLIB_PRINTF("mbedtls_aes_crypt_cbc failed %d\n", ret);
     }
-    printU8("Output:", output);
+    CRYPTO_DEBUG(printU8("Output:", output));
     //1
     plainText.clear();
 
@@ -87,20 +87,20 @@ int CryptoLib::generateIV(AU_8_16 &iv)
     ret=mbedtls_entropy_add_source(&entropy,mbedtls_hardware_poll,NULL,0,MBEDTLS_ENTROPY_SOURCE_WEAK);
     if(ret)
     {
-        PRINTF("mbedtls_entropy_add_source ret=%d\n");
+        CRYPTOLIB_PRINTF("mbedtls_entropy_add_source ret=%d\n");
     }
     mbedtls_ctr_drbg_init(&ctr_drbg);
 
     if ((ret = mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
                                      (unsigned char *)pers, strlen(pers))) != 0)
     {
-        PRINTF(" failed\n ! mbedtls_ctr_drbg_init returned -0x%04x\n", -ret);
+        CRYPTOLIB_PRINTF(" failed\n ! mbedtls_ctr_drbg_init returned -0x%04x\n", -ret);
         goto exit;
     }
 
     if ((ret = mbedtls_ctr_drbg_random(&ctr_drbg, iv, 16)) != 0)
     {
-        PRINTF(" failed\n ! mbedtls_ctr_drbg_random returned -0x%04x\n", -ret);
+        CRYPTOLIB_PRINTF(" failed\n ! mbedtls_ctr_drbg_random returned -0x%04x\n", -ret);
         goto exit;
     }
  */
@@ -109,7 +109,7 @@ int CryptoLib::generateIV(AU_8_16 &iv)
     AU_8_16 newIV;
     getRandomIV(newIV);
 
-    printU8("GeneratedIV:", newIV);
+    CRYPTO_DEBUG(printU8("GeneratedIV:", newIV));
     std::move(newIV.begin(), newIV.end(), iv.begin());
 
 exit:
@@ -139,7 +139,7 @@ int CryptoLib::generate_iv_and_encrypt(VU_8 &plainText, AU_8_16 &iv, const AU_8_
 
     if ((ret = encrypt_cbc(plainText, iv, key)) != 0)
     {
-        PRINTF(" failed\n ! encrypt_cbc returned -0x%04x\n", -ret);
+        CRYPTOLIB_PRINTF(" failed\n ! encrypt_cbc returned -0x%04x\n", -ret);
         goto exit;
     }
 
@@ -164,9 +164,9 @@ int CryptoLib::encrypt_and_cmac(VU_8 &plainText, const AU_8_16 &key)
     AU_8_16 iv;
     int ret;
     ret = generate_iv_and_encrypt(plainText, iv, key);
-    PRINTF("generate_iv_and_encrypt ret=%d\n", ret);
+    CRYPTOLIB_PRINTF("generate_iv_and_encrypt ret=%d\n", ret);
     ret = cmac_message(plainText, key);
-    PRINTF("cmac_message ret=%d\n", ret);
+    CRYPTOLIB_PRINTF("cmac_message ret=%d\n", ret);
     prependIV(plainText, iv);
     return ret;
 }
@@ -182,7 +182,7 @@ int CryptoLib::decrypt_cbc(VU_8 &encryptedText, AU_8_16 &iv, const AU_8_16 &_key
     int input_len = encryptedText.size();
     VU_8 messageDecrypt(input_len);
 
-    PRINTF("message length=%d\n", input_len);
+    CRYPTOLIB_PRINTF("message length=%d\n", input_len);
 
     int ret = 0;
 
@@ -192,17 +192,17 @@ int CryptoLib::decrypt_cbc(VU_8 &encryptedText, AU_8_16 &iv, const AU_8_16 &_key
     ret = mbedtls_aes_setkey_dec(&ctx, (uint8_t *)&_key, 128);
     if (ret != 0)
     {
-        PRINTF("mbedtls decryption set key failed %d\n", ret);
+        CRYPTOLIB_PRINTF("mbedtls decryption set key failed %d\n", ret);
         goto exit;
     }
     ret = mbedtls_aes_crypt_cbc(&ctx, MBEDTLS_AES_DECRYPT, input_len, iv.data(), encryptedText.data(), messageDecrypt.data());
     if (ret != 0)
     {
-        PRINTF("mbedtls decryption failed %d\n", ret);
+        CRYPTOLIB_PRINTF("mbedtls decryption failed %d\n", ret);
         goto exit;
     }
     mbedtls_aes_free(&ctx);
-    printU8("messageDycrypt:", messageDecrypt);
+    CRYPTO_DEBUG(printU8("messageDycrypt:", messageDecrypt));
     encryptedText.clear();
     encryptedText.insert(encryptedText.begin(), std::make_move_iterator(messageDecrypt.begin())
                                                 , std::make_move_iterator(messageDecrypt.end()));

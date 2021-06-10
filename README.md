@@ -21,7 +21,7 @@ The aim for sharing this library beside saving time, is to help C++ programmers 
 It currently supported on all Arduino platforms. ESP8266, ESP32 with more advance features than other. It's supported on STM32CubeIDE (See below). 
 
 If you have different platform, It's not hard to add your customization to `platform.h` and `platform.cpp`, which should include:
-- PRINTF definition support (if used debugging)
+- CRYPTOLIB_PRINTF definition support (if used debugging)
 - Crypto_getClock()  definition to a high clock speed function, used as entropy source.  
 You can define your own entropy source by defining `uint32_t getRandomNumber(int seed)` into your skecth.
 

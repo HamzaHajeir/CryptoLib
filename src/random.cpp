@@ -17,7 +17,7 @@ void __attribute__((weak)) getRandomIV(AU_8_16& iv)
     {
         
         uint32_t randomValue = getRandomNumber();
-        PRINTF("%04x ", randomValue);
+        CRYPTOLIB_PRINTF("%04x ", randomValue);
         for (int j = 0; j < 4; j++)
         {
             outputBuffer[i * 4 + j] = randomValue >> (8 * j) & 0xff;

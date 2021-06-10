@@ -23,12 +23,12 @@ int CryptoLib::calculate_cmac(const VU_8 &msg,VU_8 &result, const AU_8_16 &passe
     const mbedtls_cipher_info_t *cipher_info;
     cipher_info = mbedtls_cipher_info_from_type( MBEDTLS_CIPHER_AES_128_ECB );
     if(cipher_info==NULL)
-        PRINTF("mbedtls_cipher_info_from_type failed\n");
+        CRYPTOLIB_PRINTF("mbedtls_cipher_info_from_type failed\n");
 
     ret = mbedtls_cipher_cmac(cipher_info, key, 128, msg.data(), input_len, output.data());
-    PRINTF("mbedtls_cipher_cmac returned %d\n",ret);
+    CRYPTOLIB_PRINTF("mbedtls_cipher_cmac returned %d\n",ret);
 
-    printU8("CMAC:", output);
+    CRYPTO_DEBUG(printU8("CMAC:", output));
 
     result.insert(result.begin(), std::make_move_iterator(output.begin())
                                     , std::make_move_iterator(output.end()));
@@ -89,7 +89,7 @@ int CryptoLib::validateMIC(VU_8 &ciphertext, const AU_8_16 &_key, bool remove_iv
     int ret = calculate_cmac(copy,MIC_C,_key);
     if(ret!=0)
     {
-        PRINTF("calculate_cmac failed %d\n",ret);
+        CRYPTOLIB_PRINTF("calculate_cmac failed %d\n",ret);
     }
     bool result = std::equal(MIC_C.begin(),MIC_C.end(),MIC_R.begin());
 
